@@ -1,0 +1,1164 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101817">
+  <title>BBets · ROI das tips</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101817;
+      --panel: #182321;
+      --panel-raised: #1d2b28;
+      --line: #2b3b37;
+      --text: #f0f5f2;
+      --muted: #91a29c;
+      --green: #9de3a1;
+      --green-deep: #2d7549;
+      --red: #ff9386;
+      --amber: #e8c879;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(ellipse at 88% -12%, rgba(86, 148, 105, .17), transparent 35rem),
+        var(--bg);
+      color: var(--text);
+      font: 15px/1.5 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .page { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 38px 0 56px; }
+    .topline { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; font-weight: 750; letter-spacing: .14em; }
+    .brand-mark { display: grid; width: 28px; height: 28px; place-items: center; border-radius: 9px; background: var(--green); color: #102017; font-size: 17px; letter-spacing: 0; }
+    .updated { color: var(--muted); font-size: 12px; }
+    .hero { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin: 44px 0 28px; }
+    .eyebrow { margin: 0 0 10px; color: var(--green); font-size: 11px; font-weight: 750; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { max-width: 680px; margin: 0; font-size: clamp(32px, 5vw, 52px); line-height: 1.07; letter-spacing: -.045em; }
+    .hero-copy { max-width: 350px; margin: 0 0 3px; color: var(--muted); }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin: 42px 0 15px; }
+    h2 { margin: 0; font-size: 20px; letter-spacing: -.025em; }
+    .section-note { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+    .pill { flex: 0 0 auto; padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 11px; }
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .metric, .panel { border: 1px solid var(--line); border-radius: 15px; background: rgba(24, 35, 33, .92); }
+    .metric { min-height: 123px; padding: 17px 18px; }
+    .metric-label { color: var(--muted); font-size: 12px; }
+    .metric-value { margin-top: 12px; font-size: clamp(24px, 3vw, 34px); font-weight: 720; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+    .metric-detail { margin-top: 3px; color: var(--muted); font-size: 11px; }
+    .positive { color: var(--green); }
+    .negative { color: var(--red); }
+    .neutral { color: var(--text); }
+    .panel { padding: 21px; }
+    .chart-panel { margin-top: 14px; }
+    .panel-title { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+    .panel-title h3 { margin: 0; font-size: 15px; }
+    .panel-title p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+    .chart-wrap { width: 100%; overflow-x: auto; }
+    #year-chart { display: block; width: 100%; min-width: 480px; height: 260px; margin-top: 14px; overflow: visible; }
+    .grid-line { stroke: var(--line); stroke-dasharray: 3 5; }
+    .baseline { stroke: #71817b; stroke-width: 1.2; }
+    .axis-label, .year-label, .bar-label { fill: var(--muted); font: 11px ui-sans-serif, sans-serif; }
+    .bar-label { fill: var(--text); font-weight: 700; }
+    .year-label { text-anchor: middle; }
+    .bar-positive { fill: #85d392; }
+    .bar-negative { fill: #e87c70; }
+    .empty { color: var(--muted); font-size: 13px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { padding: 10px 12px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    td { padding: 12px; border-bottom: 1px solid rgba(43, 59, 55, .65); font-variant-numeric: tabular-nums; }
+    tr:last-child td { border-bottom: 0; }
+    td.number, th.number { text-align: right; }
+    .year-cell { font-weight: 700; }
+    .year-current { color: var(--green); }
+    .coverage { color: var(--muted); font-size: 12px; }
+    .monthly-panel { margin-top: 14px; }
+    .top-tips { margin-top: 44px; padding-top: 6px; border-top: 1px solid var(--line); }
+    .roi-analysis { margin: 22px 0 42px; }
+    .analysis-meta { margin: 7px 0 14px; color: var(--muted); font-size: 12px; }
+    .analysis-warning { color: var(--amber); font-size: 12px; }
+    .telegram-summary-panel { margin-top: 14px; }
+    .telegram-message summary { cursor: pointer; color: var(--green); }
+    .telegram-message pre { max-width: 430px; max-height: 260px; overflow: auto; white-space: pre-wrap; color: var(--muted); font: inherit; }
+    .top-tip-metric { display: flex; align-items: center; gap: 12px; margin: 18px 0; padding: 15px 17px; border-radius: 13px; background: var(--panel-raised); }
+    .top-tip-metric strong { font-size: 26px; font-variant-numeric: tabular-nums; }
+    .top-tip-metric span { color: var(--muted); font-size: 12px; }
+    .method { margin: 28px 0 0; padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; color: var(--muted); font-size: 12px; }
+    .method strong { color: var(--text); }
+    .error { margin: 25px 0; padding: 16px; border: 1px solid #8e4942; border-radius: 12px; background: #39211f; color: #ffd1ca; }
+    .tabs { display: flex; gap: 8px; margin: 30px 0 22px; border-bottom: 1px solid var(--line); }
+    .tab-button, .search-button { border: 1px solid var(--line); border-radius: 9px; background: var(--panel); color: var(--muted); font: inherit; cursor: pointer; }
+    .tab-button { padding: 10px 16px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+    .tab-button[aria-selected="true"] { border-color: var(--green-deep); background: var(--panel-raised); color: var(--green); }
+    .tab-panel[hidden] { display: none; }
+    .search-panel { margin-top: 0; }
+    .search-form { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 20px 0; }
+    .search-field { display: grid; gap: 6px; color: var(--muted); font-size: 12px; }
+    .search-field input { width: 100%; min-width: 0; padding: 10px 11px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--text); font: inherit; }
+    .search-checkbox { display: flex; align-items: center; gap: 8px; padding-top: 20px; }
+    .search-checkbox input { width: auto; margin: 0; }
+    .search-field input:focus, .search-button:focus-visible, .tab-button:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+    .game-actions { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; margin: 20px 0 26px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+    .game-actions .search-field { width: min(100%, 210px); }
+    .game-actions .search-actions { flex-wrap: wrap; }
+    .game-actions button:disabled { cursor: wait; opacity: .55; }
+    .game-status { flex: 1 1 100%; min-height: 18px; margin: 0; color: var(--muted); font-size: 12px; }
+    .game-status[data-state="success"] { color: var(--green); }
+    .game-status[data-state="error"] { color: var(--red); }
+    .search-actions { display: flex; align-items: end; gap: 8px; }
+    .search-button { padding: 10px 14px; color: var(--text); }
+    .search-button.primary { border-color: var(--green-deep); background: var(--green-deep); color: white; }
+    .search-summary { min-height: 22px; margin: 16px 0 8px; color: var(--muted); font-size: 13px; }
+    .search-roi { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 20px; }
+    .search-roi .metric { min-height: 96px; padding: 14px 16px; }
+    .search-roi .metric-value { margin-top: 8px; font-size: 24px; }
+    .tip-result { margin-left: 5px; font-weight: 800; }
+    .tip-result.correct { color: var(--green); }
+    .tip-result.incorrect { color: var(--red); }
+    .search-pagination { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 14px; }
+    .search-pagination button:disabled { cursor: not-allowed; opacity: .45; }
+    .selection-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 14px 0; }
+    .selection-actions p { flex: 1 1 100%; margin: 0; color: var(--muted); font-size: 13px; }
+    .selection-actions button:disabled { cursor: not-allowed; opacity: .45; }
+    .selection-status { color: var(--muted); font-size: 12px; }
+    .selection-status[data-state="success"] { color: var(--green); }
+    .selection-status[data-state="error"] { flex: 1 1 100%; padding: 9px 11px; border: 1px solid #8e4942; border-radius: 8px; background: #39211f; color: #ffd1ca; }
+    .select-match { width: 18px; height: 18px; accent-color: var(--green); }
+    .telegram-draft { display: grid; gap: 12px; margin-top: 16px; }
+    .telegram-draft[hidden] { display: none; }
+    .message-editors { display: grid; gap: 14px; }
+    .message-editor { display: grid; gap: 6px; color: var(--muted); font-size: 12px; }
+    .message-editor textarea { width: 100%; min-height: 150px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--text); font: inherit; resize: vertical; }
+    .message-editor textarea[aria-invalid="true"] { border-color: var(--red); }
+    .message-character-count { text-align: right; }
+    .draft-validation { min-height: 20px; margin: 0; color: var(--muted); font-size: 12px; }
+    footer { display: flex; justify-content: space-between; gap: 16px; margin-top: 28px; color: var(--muted); font-size: 11px; }
+
+    @media (max-width: 740px) {
+      .page { width: min(100% - 28px, 540px); padding-top: 22px; }
+      .hero { display: block; margin-top: 38px; }
+      .hero-copy { margin-top: 16px; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+      .metric { min-height: 112px; padding: 14px; }
+      .metric-value { font-size: 27px; }
+      .section-heading { align-items: start; }
+      .panel { padding: 16px; }
+      .search-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .search-actions { grid-column: 1 / -1; }
+      .search-roi { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      footer { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="topline">
+      <div class="brand"><span class="brand-mark">↗</span> BBETS · PERFORMANCE</div>
+      <div class="updated" id="updated">A carregar dados…</div>
+    </div>
+
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Arquivo de previsões</p>
+        <h1>O histórico das tips, em números.</h1>
+      </div>
+      <p class="hero-copy">Acompanha o retorno das previsões liquidadas ao longo dos anos e vê em detalhe o desempenho de 2026.</p>
+    </header>
+
+    <section class="game-actions" aria-label="Atualizar previsões">
+      <label class="search-field" for="games-date">
+        Data dos jogos
+        <input id="games-date" type="date" required>
+      </label>
+      <div class="search-actions">
+        <button class="search-button" id="download-games" type="button">Descarregar daily tips e Top Tips</button>
+        <button class="search-button primary" id="update-games" type="button">Atualizar daily tips e Top Tips</button>
+        <button class="search-button primary" id="run-roi-agent" type="button">Executar agente ROI</button>
+        <button class="search-button primary" id="summarize-day" type="button">Resumir o dia no Telegram</button>
+      </div>
+      <p class="game-status" id="games-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <nav class="tabs" role="tablist" aria-label="Secções do dashboard">
+      <button class="tab-button" id="overview-tab" type="button" role="tab" aria-selected="true" aria-controls="overview-panel">Visão geral</button>
+      <button class="tab-button" id="search-tab" type="button" role="tab" aria-selected="false" aria-controls="search-panel" tabindex="-1">Pesquisar dados</button>
+    </nav>
+
+    <div id="error" class="error" hidden></div>
+    <div class="tab-panel" id="overview-panel" role="tabpanel" aria-labelledby="overview-tab">
+    <section class="roi-analysis" id="telegram-day-summary" aria-labelledby="telegram-summary-heading" hidden>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Publicações registadas pelo dashboard</p>
+          <h2 id="telegram-summary-heading">Resumo do dia no Telegram</h2>
+          <p class="section-note" id="telegram-summary-meta">O histórico inclui mensagens enviadas pelo dashboard; publicações anteriores ou feitas por outros meios não são recuperáveis pela API do Telegram.</p>
+        </div>
+      </div>
+      <p class="analysis-meta" id="telegram-summary-status" role="status" aria-live="polite"></p>
+      <div class="metrics">
+        <article class="metric"><div class="metric-label">Mensagens enviadas</div><div class="metric-value" id="telegram-summary-messages">—</div></article>
+        <article class="metric"><div class="metric-label">Jogos partilhados</div><div class="metric-value" id="telegram-summary-predictions">—</div></article>
+        <article class="metric"><div class="metric-label">Acertadas · falhadas · pendentes</div><div class="metric-value" id="telegram-summary-settled">—</div></article>
+        <article class="metric"><div class="metric-label">Saldo teórico</div><div class="metric-value" id="telegram-summary-profit">—</div><div class="metric-detail">unidades planas; duplas divididas por igual</div></article>
+      </div>
+      <article class="panel telegram-summary-panel">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Hora do envio</th><th>Competição e jogo</th><th>Tip</th><th>Resultado</th><th>Estado</th><th class="number">Saldo (u)</th><th>Mensagem publicada</th></tr></thead>
+            <tbody id="telegram-summary-rows"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section class="roi-analysis" aria-labelledby="roi-analysis-heading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Análise guardada</p>
+          <h2 id="roi-analysis-heading">Top 5 pela probabilidade publicada</h2>
+          <p class="section-note">Compara a probabilidade publicada com a probabilidade implícita na odd média (1 ÷ odd); ordena pela maior probabilidade publicada, exigindo odd média ≥ 1,80, probabilidade publicada >55% e vantagem positiva para elegibilidade. EV e Kelly são apenas métricas de contexto, não indicações de montante.</p>
+        </div>
+      </div>
+      <p class="analysis-meta" id="roi-analysis-meta">Ainda não existe uma análise guardada.</p>
+      <article class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>#</th><th>Hora</th><th>Competição e jogo</th><th>Seleção</th><th class="number">Prob. publicada</th><th class="number">Odd média</th><th class="number">Prob. implícita</th><th class="number">Vantagem</th><th class="number">ROI esperado</th><th class="number">Índice ROI/risco (Kelly)</th><th>Aviso</th></tr>
+            </thead>
+            <tbody id="roi-analysis-rows"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section aria-labelledby="daily-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="daily-heading">Previsões diárias</h2>
+          <p class="section-note">ROI histórico calculado a partir das odds médias guardadas na base de dados.</p>
+        </div>
+        <span class="pill">1 unidade por tip</span>
+      </div>
+      <div class="metrics">
+        <article class="metric">
+          <div class="metric-label">ROI acumulado</div>
+          <div class="metric-value" id="all-roi">—</div>
+          <div class="metric-detail">desde o início do registo</div>
+        </article>
+        <article class="metric">
+          <div class="metric-label">ROI em 2026</div>
+          <div class="metric-value" id="roi-2026">—</div>
+          <div class="metric-detail" id="year-coverage">tips liquidadas em 2026</div>
+        </article>
+        <article class="metric">
+          <div class="metric-label">Resultado acumulado</div>
+          <div class="metric-value" id="all-profit">—</div>
+          <div class="metric-detail">unidades líquidas</div>
+        </article>
+        <article class="metric">
+          <div class="metric-label">Tips liquidadas</div>
+          <div class="metric-value" id="all-settled">—</div>
+          <div class="metric-detail" id="all-coverage">—</div>
+        </article>
+      </div>
+
+      <article class="panel chart-panel">
+        <div class="panel-title">
+          <div>
+            <h3>ROI por ano</h3>
+            <p>Comparação anual das previsões diárias</p>
+          </div>
+          <span class="pill">ROI (%)</span>
+        </div>
+        <div class="chart-wrap"><svg id="year-chart" role="img" aria-label="Gráfico de ROI por ano"></svg></div>
+      </article>
+
+      <article class="panel monthly-panel">
+        <div class="panel-title">
+          <div>
+            <h3>Desempenho anual</h3>
+            <p>Volume, taxa de acerto e resultado por ano</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Ano</th><th class="number">Tips liquidadas</th><th class="number">Acerto</th><th class="number">Resultado</th><th class="number">ROI</th></tr></thead>
+            <tbody id="year-rows"></tbody>
+          </table>
+        </div>
+      </article>
+      <article class="panel monthly-panel">
+        <div class="panel-title">
+          <div>
+            <h3>2026 mês a mês</h3>
+            <p>Previsões diárias registadas neste ano</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Mês</th><th class="number">Liquidadas</th><th class="number">Acerto</th><th class="number">Resultado</th><th class="number">ROI</th></tr></thead>
+            <tbody id="month-rows"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section class="top-tips" aria-labelledby="top-tips-heading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Série independente</p>
+          <h2 id="top-tips-heading">Top Tips de 2026</h2>
+          <p class="section-note">Indicador separado: estas previsões vêm das páginas mensais “Top Tips”, não da série diária.</p>
+        </div>
+      </div>
+      <div class="top-tip-metric">
+        <strong id="top-roi">—</strong>
+        <span><b id="top-settled">—</b> tips liquidadas · resultado líquido de <b id="top-profit">—</b></span>
+      </div>
+      <article class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Mês</th><th class="number">Liquidadas</th><th class="number">Acerto</th><th class="number">Resultado</th><th class="number">ROI</th></tr></thead>
+            <tbody id="top-month-rows"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <p class="method"><strong>Como é calculado:</strong> aposta fixa de 1 unidade por tip, usando as odds médias 1X2 guardadas. Em tips duplas (1X, 12, X2), a unidade é dividida igualmente pelas seleções. Só entram tips com resultado final válido e odds disponíveis para todas as seleções; previsões por liquidar ou com dados incompletos ficam de fora.</p>
+    <footer><span>Fonte: base de dados local</span><span id="footer-count"></span></footer>
+    </div>
+
+    <section class="tab-panel" id="search-panel" role="tabpanel" aria-labelledby="search-tab" hidden>
+      <div class="section-heading">
+        <div>
+          <h2>Pesquisar previsões</h2>
+          <p class="section-note">Filtra os jogos guardados por equipa, competição e período. Os filtros podem ser combinados.</p>
+        </div>
+      </div>
+      <article class="panel search-panel">
+        <form id="search-form" class="search-form">
+          <label class="search-field">Equipa
+            <input name="team" type="search" placeholder="Nome da equipa" autocomplete="off">
+          </label>
+          <label class="search-field">Competição
+            <input name="competition" type="search" placeholder="Nome da competição" autocomplete="off">
+          </label>
+          <label class="search-field">Data
+            <input name="date" type="date">
+          </label>
+          <label class="search-field">Mês
+            <input name="month" type="month">
+          </label>
+          <label class="search-field">Ano
+            <input name="year" type="number" min="1900" max="9999" step="1" placeholder="AAAA">
+          </label>
+          <label class="search-field search-checkbox">
+            <input name="top_tips" type="checkbox" value="1">
+            Apenas Top Tips
+          </label>
+          <label class="search-field">Odd mínima
+            <input name="odds_min" type="number" min="1" step="0.01" placeholder="Ex.: 1.50">
+          </label>
+          <label class="search-field">Odd máxima
+            <input name="odds_max" type="number" min="1" step="0.01" placeholder="Ex.: 3.00">
+          </label>
+          <div class="search-actions">
+            <button class="search-button primary" type="submit">Pesquisar</button>
+            <button class="search-button" id="clear-search" type="reset">Limpar</button>
+          </div>
+        </form>
+        <p class="section-note">Nas tips duplas, todas as odds das seleções têm de respeitar o intervalo.</p>
+        <div class="search-roi" aria-label="ROI dos resultados da pesquisa">
+          <article class="metric">
+            <div class="metric-label">ROI dos resultados</div>
+            <div class="metric-value" id="search-roi-value">—</div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">Resultado líquido</div>
+            <div class="metric-value" id="search-roi-profit">—</div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">Tips liquidadas</div>
+            <div class="metric-value" id="search-roi-settled">—</div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">Taxa de acerto</div>
+            <div class="metric-value" id="search-roi-win-rate">—</div>
+          </article>
+        </div>
+        <p class="search-summary" id="search-summary" role="status" aria-live="polite">Introduz um ou mais filtros e pesquisa.</p>
+        <div class="selection-actions">
+          <p id="selection-count" aria-live="polite">0 jogos selecionados.</p>
+          <button class="search-button primary" id="send-selected" type="button" disabled>Preparar mensagens</button>
+          <button class="search-button" id="clear-selection" type="button" disabled>Limpar seleção</button>
+          <span class="selection-status" id="telegram-status" role="status" aria-live="polite"></span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Enviar</th><th>Data</th><th>Hora</th><th>Jogo</th><th>Competição</th><th>Origem</th><th>Tip</th><th>Odds</th><th>Resultado</th></tr>
+            </thead>
+            <tbody id="search-rows"><tr><td colspan="9" class="empty">Os resultados aparecerão aqui.</td></tr></tbody>
+          </table>
+        </div>
+        <section class="telegram-draft" id="telegram-draft" aria-labelledby="telegram-draft-heading" hidden>
+          <div>
+            <h3 id="telegram-draft-heading">Pré-visualização das mensagens</h3>
+            <p class="section-note">Revê e edita o texto. Só mensagens válidas podem ser confirmadas; cada uma pode ter até 4096 caracteres.</p>
+          </div>
+          <div class="message-editors" id="message-editors"></div>
+          <p class="draft-validation" id="draft-validation" role="status" aria-live="polite"></p>
+          <div class="selection-actions">
+            <button class="search-button primary" id="confirm-send" type="button" disabled>Confirmar e enviar ao Telegram</button>
+            <button class="search-button" id="discard-draft" type="button">Cancelar pré-visualização</button>
+          </div>
+        </section>
+        <div class="search-pagination" id="search-pagination" hidden>
+          <button class="search-button" id="previous-page" type="button">Anterior</button>
+          <span id="page-label"></span>
+          <button class="search-button" id="next-page" type="button">Seguinte</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const number = new Intl.NumberFormat("pt-PT");
+    const monthName = new Intl.DateTimeFormat("pt-PT", { month: "long", year: "numeric", timeZone: "UTC" });
+    const tipSelections = {
+      "1": [["home", "1"]],
+      "X": [["draw", "X"]],
+      "2": [["away", "2"]],
+      "1X": [["home", "1"], ["draw", "X"]],
+      "12": [["home", "1"], ["away", "2"]],
+      "X2": [["draw", "X"], ["away", "2"]]
+    };
+    const percent = value => `${Number(value).toLocaleString("pt-PT", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+    const units = value => `${Number(value).toLocaleString("pt-PT", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} u`;
+    const tone = value => Number(value) > 0 ? "positive" : Number(value) < 0 ? "negative" : "neutral";
+    const setValue = (id, value, className) => {
+      const element = document.getElementById(id);
+      element.textContent = value;
+      if (className) element.className = `metric-value ${className}`;
+    };
+    const gamesDate = document.getElementById("games-date");
+    const today = new Date();
+    gamesDate.value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    gamesDate.max = gamesDate.value;
+
+    async function processGames(action) {
+      const selectedDate = gamesDate.value;
+      const status = document.getElementById("games-status");
+      const buttons = ["download-games", "update-games", "run-roi-agent", "summarize-day"].map(id => document.getElementById(id));
+      if (!selectedDate) {
+        status.dataset.state = "error";
+        status.textContent = "Seleciona uma data.";
+        return;
+      }
+
+      buttons.forEach(button => { button.disabled = true; });
+      status.dataset.state = "";
+      status.textContent = action === "update"
+        ? "A atualizar daily tips e Top Tips…"
+        : "A descarregar daily tips e Top Tips…";
+      try {
+        const response = await fetch(`/api/games/${action}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ date: selectedDate })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || `O servidor respondeu com o erro ${response.status}.`);
+        status.dataset.state = "success";
+        status.textContent = result.message;
+        await loadDashboard();
+        if (currentSearchData) await searchMatches(searchPage);
+      } catch (error) {
+        status.dataset.state = "error";
+        status.textContent = `Não foi possível processar os jogos. ${error.message}`;
+      } finally {
+        buttons.forEach(button => { button.disabled = false; });
+      }
+    }
+
+    document.getElementById("download-games").addEventListener("click", () => processGames("download"));
+    document.getElementById("update-games").addEventListener("click", () => processGames("update"));
+
+    async function runRoiAgent() {
+      const selectedDate = gamesDate.value;
+      const status = document.getElementById("games-status");
+      const buttons = ["download-games", "update-games", "run-roi-agent", "summarize-day"]
+        .map(id => document.getElementById(id));
+      if (!selectedDate) {
+        status.dataset.state = "error";
+        status.textContent = "Seleciona uma data.";
+        return;
+      }
+
+      buttons.forEach(button => { button.disabled = true; });
+      status.dataset.state = "";
+      status.textContent = "A executar a análise ROI: a atualizar dados e calcular as melhores seleções…";
+      try {
+        const response = await fetch("/api/roi-analysis/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ date: selectedDate })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || `O servidor respondeu com o erro ${response.status}.`);
+        status.dataset.state = "success";
+        status.textContent = result.message;
+        await loadDashboard();
+      } catch (error) {
+        status.dataset.state = "error";
+        status.textContent = `Não foi possível executar a análise ROI. ${error.message}`;
+      } finally {
+        buttons.forEach(button => { button.disabled = false; });
+      }
+    }
+
+    document.getElementById("run-roi-agent").addEventListener("click", runRoiAgent);
+
+    async function summarizeTelegramDay() {
+      const selectedDate = gamesDate.value;
+      const status = document.getElementById("games-status");
+      const buttons = ["download-games", "update-games", "run-roi-agent", "summarize-day"]
+        .map(id => document.getElementById(id));
+      if (!selectedDate) {
+        status.dataset.state = "error";
+        status.textContent = "Seleciona uma data.";
+        return;
+      }
+
+      buttons.forEach(button => { button.disabled = true; });
+      status.dataset.state = "";
+      status.textContent = "A atualizar resultados publicados pelo ZuluBet e a resumir os jogos partilhados…";
+      try {
+        const response = await fetch("/api/telegram/summary", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ date: selectedDate })
+        });
+        const report = await response.json();
+        if (!response.ok) throw new Error(report.error || `O servidor respondeu com o erro ${response.status}.`);
+        const summary = report.summary;
+        document.getElementById("telegram-day-summary").hidden = false;
+        selectTab("overview");
+        document.getElementById("telegram-summary-meta").textContent =
+          `Data ${report.date} · ${summary.pending} pendente(s) ou sem dados suficientes para liquidação.`;
+        document.getElementById("telegram-summary-messages").textContent = number.format(summary.messages);
+        document.getElementById("telegram-summary-predictions").textContent = number.format(summary.predictions);
+        document.getElementById("telegram-summary-settled").textContent =
+          `${number.format(summary.wins)} · ${number.format(summary.losses)} · ${number.format(summary.pending)}`;
+        const profit = document.getElementById("telegram-summary-profit");
+        profit.textContent = units(summary.net_units);
+        profit.className = `metric-value ${tone(summary.net_units)}`;
+        const body = document.getElementById("telegram-summary-rows");
+        if (!report.matches.length) {
+          body.innerHTML = `<tr><td colspan="8" class="empty">Não há jogos dessa data registados nos envios do dashboard.</td></tr>`;
+        } else {
+          body.replaceChildren(...report.matches.map((match, index) => {
+            const row = document.createElement("tr");
+            const cells = [
+              String(index + 1),
+              new Date(match.sent_at).toLocaleString("pt-PT"),
+              [match.competition, [match.home_team, match.away_team].filter(Boolean).join(" - ")]
+                .filter(Boolean).join(" · ") || "—",
+              match.tip || "—",
+              match.score || "—",
+              match.status,
+              match.net_units === null ? "—" : Number(match.net_units).toLocaleString("pt-PT", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            ];
+            cells.forEach((value, cellIndex) => {
+              const cell = document.createElement("td");
+              cell.textContent = value;
+              if (cellIndex === 6) cell.className = "number";
+              row.append(cell);
+            });
+            const messageCell = document.createElement("td");
+            const messageDetails = document.createElement("details");
+            messageDetails.className = "telegram-message";
+            const messageLabel = document.createElement("summary");
+            messageLabel.textContent = match.telegram_message_id
+              ? `Ver mensagem #${match.telegram_message_id}` : "Ver mensagem";
+            const messageText = document.createElement("pre");
+            messageText.textContent = match.message_text;
+            messageDetails.append(messageLabel, messageText);
+            messageCell.append(messageDetails);
+            row.append(messageCell);
+            return row;
+          }));
+        }
+        if (report.refresh_warnings.length) {
+          status.dataset.state = "error";
+          status.textContent = `Resumo calculado com os dados locais; a atualização teve falhas: ${report.refresh_warnings.join(" ")}`;
+        } else {
+          status.dataset.state = "success";
+          status.textContent = `Resumo de ${report.date} atualizado com os resultados disponíveis no ZuluBet.`;
+        }
+      } catch (error) {
+        status.dataset.state = "error";
+        status.textContent = `Não foi possível resumir o dia. ${error.message}`;
+      } finally {
+        buttons.forEach(button => { button.disabled = false; });
+      }
+    }
+
+    document.getElementById("summarize-day").addEventListener("click", summarizeTelegramDay);
+
+    function renderRows(elementId, rows, periodType) {
+      const body = document.getElementById(elementId);
+      if (!rows.length) {
+        body.innerHTML = `<tr><td colspan="5" class="empty">Sem dados disponíveis para este período.</td></tr>`;
+        return;
+      }
+      body.replaceChildren(...rows.slice().reverse().map(row => {
+        const tr = document.createElement("tr");
+        const label = periodType === "month"
+          ? monthName.format(new Date(`${row.period}-01T00:00:00Z`))
+          : row.period;
+        const cells = [
+          [label, periodType === "year" && row.period === "2026" ? "year-cell year-current" : "year-cell"],
+          [number.format(row.settled), "number"],
+          [percent(row.win_rate), "number"],
+          [units(row.net_units), `number ${tone(row.net_units)}`],
+          [percent(row.roi), `number ${tone(row.roi)}`]
+        ];
+        for (const [text, className] of cells) {
+          const td = document.createElement("td");
+          td.textContent = text;
+          td.className = className;
+          tr.append(td);
+        }
+        return tr;
+      }));
+    }
+
+    function renderRoiAnalysis(analysis) {
+      const meta = document.getElementById("roi-analysis-meta");
+      const body = document.getElementById("roi-analysis-rows");
+      if (!analysis) {
+        meta.textContent = "Ainda não existe uma análise guardada.";
+        body.innerHTML = `<tr><td colspan="11" class="empty">Executa o agente ROI para guardar a análise.</td></tr>`;
+        return;
+      }
+
+      meta.replaceChildren();
+      const stamp = document.createTextNode(
+        `Análise de ${analysis.analysis_date}, guardada em ${analysis.analyzed_at} · `
+      );
+      const source = document.createElement("a");
+      source.href = analysis.source_url;
+      source.target = "_blank";
+      source.rel = "noopener noreferrer";
+      source.textContent = "Fonte diária";
+      meta.append(stamp, source);
+
+      if (!analysis.selections.length) {
+        body.innerHTML = `<tr><td colspan="11" class="empty">Não foram encontradas seleções 1X2 com probabilidade superior à implícita na odd.</td></tr>`;
+        return;
+      }
+      const outcome = { home: "1", draw: "X", away: "2" };
+      body.replaceChildren(...analysis.selections.map(selection => {
+        const row = document.createElement("tr");
+        const cells = [
+          [number.format(selection.rank), ""],
+          [(selection.kickoff_local || "").split(", ").at(-1) || "—", ""],
+          [`${selection.competition || "—"} · ${selection.home_team || "—"} vs ${selection.away_team || "—"}`, ""],
+          [outcome[selection.selection] || selection.selection, ""],
+          [percent(selection.probability * 100), "number"],
+          [Number(selection.average_odds).toLocaleString("pt-PT", { minimumFractionDigits: 2, maximumFractionDigits: 2 }), "number"],
+          [percent(selection.break_even_probability * 100), "number"],
+          [`${number.format(selection.probability_edge * 100)} p.p.`, "number"],
+          [percent(selection.expected_roi * 100), `number ${tone(selection.expected_roi)}`],
+          [percent(selection.risk_adjusted_roi * 100), "number"],
+          [selection.warning || "—", selection.warning ? "analysis-warning" : ""]
+        ];
+        for (const [text, className] of cells) {
+          const cell = document.createElement("td");
+          cell.textContent = text;
+          cell.className = className;
+          row.append(cell);
+        }
+        return row;
+      }));
+    }
+
+    function renderChart(rows) {
+      const svg = document.getElementById("year-chart");
+      const width = Math.max(svg.clientWidth, 480);
+      const height = 260;
+      const margin = { top: 24, right: 12, bottom: 34, left: 48 };
+      const chartHeight = height - margin.top - margin.bottom;
+      const maxValue = Math.max(0, ...rows.map(row => Number(row.roi)));
+      const minValue = Math.min(0, ...rows.map(row => Number(row.roi)));
+      const padding = Math.max((maxValue - minValue) * .14, 2);
+      const max = maxValue + padding;
+      const min = minValue - padding;
+      const y = value => margin.top + (max - value) / (max - min) * chartHeight;
+      const zero = y(0);
+      const slot = (width - margin.left - margin.right) / Math.max(rows.length, 1);
+      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+      svg.replaceChildren();
+      for (let index = 0; index < 4; index += 1) {
+        const value = max - (max - min) * index / 3;
+        const lineY = y(value);
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", margin.left);
+        line.setAttribute("x2", width - margin.right);
+        line.setAttribute("y1", lineY);
+        line.setAttribute("y2", lineY);
+        line.setAttribute("class", index === 3 ? "baseline" : "grid-line");
+        svg.append(line);
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", margin.left - 8);
+        label.setAttribute("y", lineY + 4);
+        label.setAttribute("text-anchor", "end");
+        label.setAttribute("class", "axis-label");
+        label.textContent = `${value.toFixed(0)}%`;
+        svg.append(label);
+      }
+      const baseline = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      baseline.setAttribute("x1", margin.left);
+      baseline.setAttribute("x2", width - margin.right);
+      baseline.setAttribute("y1", zero);
+      baseline.setAttribute("y2", zero);
+      baseline.setAttribute("class", "baseline");
+      svg.append(baseline);
+      rows.forEach((row, index) => {
+        const value = Number(row.roi);
+        const barWidth = Math.min(42, slot * .48);
+        const barX = margin.left + slot * index + (slot - barWidth) / 2;
+        const barY = Math.min(y(value), zero);
+        const barHeight = Math.max(Math.abs(y(value) - zero), 1);
+        const bar = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        bar.setAttribute("x", barX);
+        bar.setAttribute("y", barY);
+        bar.setAttribute("width", barWidth);
+        bar.setAttribute("height", barHeight);
+        bar.setAttribute("rx", 4);
+        bar.setAttribute("class", value >= 0 ? "bar-positive" : "bar-negative");
+        const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        title.textContent = `${row.period}: ${percent(value)} · ${number.format(row.settled)} tips`;
+        bar.append(title);
+        svg.append(bar);
+        const valueLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        valueLabel.setAttribute("x", barX + barWidth / 2);
+        valueLabel.setAttribute("y", value >= 0 ? Math.max(barY - 7, 12) : barY + barHeight + 15);
+        valueLabel.setAttribute("text-anchor", "middle");
+        valueLabel.setAttribute("class", "bar-label");
+        valueLabel.textContent = `${value.toFixed(1)}%`;
+        svg.append(valueLabel);
+        const year = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        year.setAttribute("x", barX + barWidth / 2);
+        year.setAttribute("y", height - 8);
+        year.setAttribute("class", "year-label");
+        year.textContent = row.period;
+        svg.append(year);
+      });
+    }
+
+    let chartRows = [];
+    let searchPage = 1;
+    let currentSearchData = null;
+    let sendingSelection = false;
+    let messageDraftId = null;
+    let draftMessages = [];
+    const selectedPredictions = new Map();
+
+    function selectionKey(result) {
+      return JSON.stringify([result.source, result.date, result.match_id, result.source_month]);
+    }
+
+    function setTelegramStatus(message, state = "info") {
+      const status = document.getElementById("telegram-status");
+      status.textContent = message;
+      status.dataset.state = state;
+    }
+
+    function updateSelectionControls() {
+      const count = selectedPredictions.size;
+      document.getElementById("selection-count").textContent =
+        `${count} jogo${count === 1 ? "" : "s"} selecionado${count === 1 ? "" : "s"}.`;
+      const selectionLocked = sendingSelection || messageDraftId !== null;
+      document.getElementById("send-selected").disabled = selectionLocked || count === 0;
+      document.getElementById("clear-selection").disabled = selectionLocked || count === 0;
+    }
+
+    function selectTab(tab) {
+      const searchSelected = tab === "search";
+      document.getElementById("overview-tab").setAttribute("aria-selected", String(!searchSelected));
+      document.getElementById("overview-tab").tabIndex = searchSelected ? -1 : 0;
+      document.getElementById("search-tab").setAttribute("aria-selected", String(searchSelected));
+      document.getElementById("search-tab").tabIndex = searchSelected ? 0 : -1;
+      document.getElementById("overview-panel").hidden = searchSelected;
+      document.getElementById("search-panel").hidden = !searchSelected;
+    }
+
+    function resetSearchRoi() {
+      for (const id of ["search-roi-value", "search-roi-profit", "search-roi-settled", "search-roi-win-rate"]) {
+        const element = document.getElementById(id);
+        element.textContent = "—";
+        element.className = "metric-value";
+      }
+    }
+
+    function renderSearchResults(data) {
+      const body = document.getElementById("search-rows");
+      if (!data.results.length) {
+        body.innerHTML = `<tr><td colspan="9" class="empty">Não foram encontrados resultados para estes filtros.</td></tr>`;
+      } else {
+        body.replaceChildren(...data.results.map(result => {
+          const tr = document.createElement("tr");
+          const selectionCell = document.createElement("td");
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.className = "select-match";
+          checkbox.checked = selectedPredictions.has(selectionKey(result));
+          checkbox.disabled = sendingSelection || messageDraftId !== null;
+          checkbox.setAttribute("aria-label", `Selecionar ${result.home_team} - ${result.away_team}`);
+          checkbox.addEventListener("change", () => {
+            const key = selectionKey(result);
+            if (checkbox.checked) {
+              if (!selectedPredictions.has(key) && selectedPredictions.size >= 100) {
+                checkbox.checked = false;
+                setTelegramStatus("Podes selecionar no máximo 100 jogos de cada vez.", "error");
+                return;
+              }
+              selectedPredictions.set(key, {
+                date: result.date,
+                match_id: result.match_id,
+                source: result.source,
+                source_month: result.source_month
+              });
+            } else {
+              selectedPredictions.delete(key);
+            }
+            updateSelectionControls();
+          });
+          selectionCell.append(checkbox);
+          tr.append(selectionCell);
+          const basicCells = [
+            result.date ? new Date(`${result.date}T00:00:00Z`).toLocaleDateString("pt-PT", { timeZone: "UTC" }) : "—",
+            result.kickoff_local?.match(/,\s*(\d{2}:\d{2})$/)?.[1] || "—",
+            [result.home_team, result.away_team].filter(Boolean).join(" - ") || "—",
+            result.competition || "—",
+            result.source
+          ];
+          for (const text of basicCells) {
+            const td = document.createElement("td");
+            td.textContent = text;
+            tr.append(td);
+          }
+
+          const tipCell = document.createElement("td");
+          tipCell.append(document.createTextNode(result.tip || "—"));
+          if (result.won !== null) {
+            const marker = document.createElement("span");
+            marker.className = `tip-result ${result.won ? "correct" : "incorrect"}`;
+            marker.setAttribute("role", "img");
+            marker.setAttribute("aria-label", result.won ? "Tip acertada" : "Tip errada");
+            marker.textContent = result.won ? "✓" : "✗";
+            tipCell.append(marker);
+          }
+          tr.append(tipCell);
+
+          const odds = (tipSelections[(result.tip || "").trim().toUpperCase()] || [])
+            .map(([selection, label]) => {
+              const value = result[`${selection}_odds`];
+              if (value === null || value === undefined) return null;
+              const numeric = Number(value);
+              const formatted = Number.isFinite(numeric)
+                ? numeric.toLocaleString("pt-PT", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                : value;
+              return `${label}: ${formatted}`;
+            })
+            .filter(Boolean)
+            .join(" · ") || "—";
+          const oddsCell = document.createElement("td");
+          oddsCell.textContent = odds;
+          tr.append(oddsCell);
+
+          const scoreCell = document.createElement("td");
+          scoreCell.textContent = result.score || "—";
+          tr.append(scoreCell);
+          return tr;
+        }));
+      }
+
+      setValue("search-roi-value", percent(data.roi.roi), tone(data.roi.roi));
+      setValue("search-roi-profit", units(data.roi.net_units), tone(data.roi.net_units));
+      setValue("search-roi-settled", number.format(data.roi.settled));
+      setValue("search-roi-win-rate", percent(data.roi.win_rate));
+      const totalPages = Math.ceil(data.total / data.page_size);
+      document.getElementById("search-summary").textContent =
+        `${number.format(data.total)} resultado${data.total === 1 ? "" : "s"} encontrado${data.total === 1 ? "" : "s"}.`;
+      const pagination = document.getElementById("search-pagination");
+      pagination.hidden = totalPages <= 1;
+      document.getElementById("page-label").textContent = `Página ${data.page} de ${totalPages}`;
+      document.getElementById("previous-page").disabled = data.page <= 1;
+      document.getElementById("next-page").disabled = data.page >= totalPages;
+      updateSelectionControls();
+    }
+
+    async function searchMatches(page = 1) {
+      searchPage = page;
+      const query = new URLSearchParams(new FormData(document.getElementById("search-form")));
+      query.set("page", String(page));
+      document.getElementById("search-summary").textContent = "A pesquisar…";
+      resetSearchRoi();
+      try {
+        const response = await fetch(`/api/search?${query}`);
+        if (!response.ok) throw new Error(`O servidor respondeu com o erro ${response.status}.`);
+        currentSearchData = await response.json();
+        renderSearchResults(currentSearchData);
+      } catch (error) {
+        document.getElementById("search-summary").textContent =
+          `Não foi possível pesquisar a base de dados. ${error.message}`;
+      }
+    }
+
+    function updateDraftValidation() {
+      const textareas = [...document.querySelectorAll("#message-editors textarea")];
+      const errors = [];
+      textareas.forEach((textarea, index) => {
+        const message = textarea.value;
+        const error = !message.trim()
+          ? "não pode estar vazia"
+          : message.length > 4096
+            ? "excede o limite de 4096 caracteres"
+          : /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/.test(message)
+            ? "contém caracteres de controlo inválidos"
+            : null;
+        draftMessages[index] = message;
+        textarea.setAttribute("aria-invalid", String(Boolean(error)));
+        const counter = textarea.nextElementSibling;
+        counter.textContent = `${message.length} / 4096`;
+        if (error) errors.push(`Mensagem ${index + 1} ${error}.`);
+      });
+      document.getElementById("confirm-send").disabled =
+        sendingSelection || messageDraftId === null || errors.length > 0;
+      document.getElementById("draft-validation").textContent = errors.length
+        ? errors.join(" ")
+        : "Mensagens válidas. Revê o conteúdo antes de confirmar o envio.";
+      return errors.length === 0 && textareas.length > 0;
+    }
+
+    function renderMessageDraft(messages) {
+      draftMessages = [...messages];
+      const editors = document.getElementById("message-editors");
+      editors.replaceChildren(...draftMessages.map((message, index) => {
+        const label = document.createElement("label");
+        label.className = "message-editor";
+        label.append(document.createTextNode(`Mensagem ${index + 1}`));
+        const textarea = document.createElement("textarea");
+        textarea.value = message;
+        textarea.maxLength = 4096;
+        textarea.disabled = sendingSelection;
+        textarea.addEventListener("input", updateDraftValidation);
+        const counter = document.createElement("span");
+        counter.className = "message-character-count";
+        label.append(textarea, counter);
+        return label;
+      }));
+      updateDraftValidation();
+    }
+
+    function clearMessageDraft() {
+      messageDraftId = null;
+      draftMessages = [];
+      document.getElementById("telegram-draft").hidden = true;
+      document.getElementById("message-editors").replaceChildren();
+      document.getElementById("draft-validation").textContent = "";
+      updateSelectionControls();
+    }
+
+    async function prepareSelectedPredictions() {
+      if (!selectedPredictions.size || messageDraftId || sendingSelection) return;
+      sendingSelection = true;
+      setTelegramStatus("A preparar a pré-visualização…");
+      if (currentSearchData) renderSearchResults(currentSearchData);
+      updateSelectionControls();
+      try {
+        const response = await fetch("/api/telegram/prepare", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ matches: [...selectedPredictions.values()] })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || `Erro ${response.status}`);
+        if (typeof result.draft_id !== "string" || !Array.isArray(result.messages)) {
+          throw new Error("O servidor devolveu uma pré-visualização inválida.");
+        }
+        messageDraftId = result.draft_id;
+        document.getElementById("telegram-draft").hidden = false;
+        renderMessageDraft(result.messages);
+        setTelegramStatus("Pré-visualização criada. Revê ou edita as mensagens antes de confirmar.");
+      } catch (error) {
+        setTelegramStatus(`Não foi possível preparar as mensagens: ${error.message}`, "error");
+      } finally {
+        sendingSelection = false;
+        document.querySelectorAll("#message-editors textarea").forEach(textarea => {
+          textarea.disabled = false;
+        });
+        updateDraftValidation();
+        if (currentSearchData) renderSearchResults(currentSearchData);
+        updateSelectionControls();
+      }
+    }
+
+    async function confirmMessageSend() {
+      if (sendingSelection || !messageDraftId || !updateDraftValidation()) return;
+      if (!window.confirm("Confirma o envio destas mensagens para o canal do Telegram?")) {
+        setTelegramStatus("Envio cancelado. Nenhuma mensagem foi enviada.");
+        return;
+      }
+      sendingSelection = true;
+      setTelegramStatus("A enviar para o Telegram. Aguarda a resposta…");
+      updateDraftValidation();
+      document.getElementById("discard-draft").disabled = true;
+      document.querySelectorAll("#message-editors textarea").forEach(textarea => {
+        textarea.disabled = true;
+      });
+      try {
+        const response = await fetch("/api/telegram/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            draft_id: messageDraftId,
+            messages: draftMessages,
+            confirmed: true
+          })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || `Erro ${response.status}`);
+        const sentMessages = result.sent_messages;
+        selectedPredictions.clear();
+        clearMessageDraft();
+        setTelegramStatus(`${sentMessages} mensagem(ns) enviada(s) para o canal.`, "success");
+      } catch (error) {
+        setTelegramStatus(`Não foi possível enviar: ${error.message}`, "error");
+      } finally {
+        sendingSelection = false;
+        document.getElementById("discard-draft").disabled = false;
+        document.querySelectorAll("#message-editors textarea").forEach(textarea => {
+          textarea.disabled = false;
+        });
+        updateDraftValidation();
+        if (currentSearchData) renderSearchResults(currentSearchData);
+        updateSelectionControls();
+      }
+    }
+
+    async function discardMessageDraft() {
+      if (!messageDraftId || sendingSelection) return;
+      sendingSelection = true;
+      document.getElementById("discard-draft").disabled = true;
+      document.querySelectorAll("#message-editors textarea").forEach(textarea => {
+        textarea.disabled = true;
+      });
+      updateSelectionControls();
+      try {
+        const response = await fetch("/api/telegram/discard", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ draft_id: messageDraftId })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || `Erro ${response.status}`);
+        clearMessageDraft();
+        setTelegramStatus("Pré-visualização cancelada.");
+      } catch (error) {
+        setTelegramStatus(`Não foi possível cancelar a pré-visualização: ${error.message}`, "error");
+      } finally {
+        sendingSelection = false;
+        document.getElementById("discard-draft").disabled = false;
+        document.querySelectorAll("#message-editors textarea").forEach(textarea => {
+          textarea.disabled = false;
+        });
+        updateDraftValidation();
+        updateSelectionControls();
+      }
+    }
+
+    document.getElementById("overview-tab").addEventListener("click", () => selectTab("overview"));
+    document.getElementById("search-tab").addEventListener("click", () => selectTab("search"));
+    document.getElementById("send-selected").addEventListener("click", prepareSelectedPredictions);
+    document.getElementById("confirm-send").addEventListener("click", confirmMessageSend);
+    document.getElementById("discard-draft").addEventListener("click", discardMessageDraft);
+    document.getElementById("clear-selection").addEventListener("click", () => {
+      selectedPredictions.clear();
+      setTelegramStatus("");
+      if (currentSearchData) renderSearchResults(currentSearchData);
+      updateSelectionControls();
+    });
+    document.getElementById("search-form").addEventListener("submit", event => {
+      event.preventDefault();
+      searchMatches(1);
+    });
+    document.getElementById("search-form").addEventListener("reset", () => {
+      requestAnimationFrame(() => {
+        currentSearchData = null;
+        document.getElementById("search-rows").innerHTML =
+          `<tr><td colspan="9" class="empty">Os resultados aparecerão aqui.</td></tr>`;
+        document.getElementById("search-summary").textContent =
+          "Introduz um ou mais filtros e pesquisa.";
+        resetSearchRoi();
+        document.getElementById("search-pagination").hidden = true;
+      });
+    });
+    document.getElementById("previous-page").addEventListener("click", () => searchMatches(searchPage - 1));
+    document.getElementById("next-page").addEventListener("click", () => searchMatches(searchPage + 1));
+
+    async function loadDashboard() {
+      try {
+        const response = await fetch("/api/roi");
+        if (!response.ok) throw new Error(`O servidor respondeu com o erro ${response.status}.`);
+        const data = await response.json();
+        const daily = data.daily;
+        setValue("all-roi", percent(daily.all_time.roi), tone(daily.all_time.roi));
+        setValue("roi-2026", percent(daily["2026"].roi), tone(daily["2026"].roi));
+        setValue("all-profit", units(daily.all_time.net_units), tone(daily.all_time.net_units));
+        setValue("all-settled", number.format(daily.all_time.settled));
+        document.getElementById("all-coverage").textContent =
+          `${number.format(daily.all_time.excluded)} sem dados suficientes de liquidação`;
+        document.getElementById("year-coverage").textContent =
+          `${number.format(daily["2026"].settled)} liquidadas · ${percent(daily["2026"].win_rate)} de acerto`;
+        chartRows = daily.years;
+        renderChart(daily.years);
+        renderRows("year-rows", daily.years, "year");
+        renderRows("month-rows", daily.months_2026, "month");
+
+        const top = data.top_tips_2026;
+        document.getElementById("top-roi").textContent = percent(top.all_time.roi);
+        document.getElementById("top-roi").className = tone(top.all_time.roi);
+        document.getElementById("top-settled").textContent = number.format(top.all_time.settled);
+        document.getElementById("top-profit").textContent = units(top.all_time.net_units);
+        document.getElementById("top-profit").className = tone(top.all_time.net_units);
+        renderRows("top-month-rows", top.months, "month");
+        renderRoiAnalysis(data.roi_analysis);
+        document.getElementById("updated").textContent = data.updated_through
+          ? `Dados até ${new Date(`${data.updated_through}T00:00:00Z`).toLocaleDateString("pt-PT", { timeZone: "UTC" })}`
+          : "Base de dados sem previsões";
+        document.getElementById("footer-count").textContent =
+          `${number.format(daily.all_time.predictions)} previsões diárias analisadas`;
+      } catch (error) {
+        const alert = document.getElementById("error");
+        alert.hidden = false;
+        alert.textContent = `Não foi possível carregar os dados do dashboard. ${error.message} Confirma que o servidor local está ligado e que a base de dados está disponível.`;
+        document.getElementById("updated").textContent = "Falha ao carregar os dados";
+      }
+    }
+
+    loadDashboard();
+    window.addEventListener("resize", () => renderChart(chartRows));
+  </script>
+</body>
+</html>
